@@ -36,7 +36,7 @@ func TestNewVerifier(t *testing.T) {
 			}
 		}
 	}
-	for i := 0; i < len(b); i++ {
+	for i := range b {
 		b[i]++
 		badKey(string(b))
 		b[i]--
@@ -66,7 +66,7 @@ func TestNewSigner(t *testing.T) {
 			}
 		}
 	}
-	for i := 0; i < len(b); i++ {
+	for i := range b {
 		b[i]++
 		_, err := NewSigner(string(b))
 		if err == nil {

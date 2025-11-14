@@ -70,7 +70,7 @@ type ctTreeProof struct {
 	Proof TreeProof `json:"consistency"`
 }
 
-func httpGET(t *testing.T, url string, targ interface{}) {
+func httpGET(t *testing.T, url string, targ any) {
 	if testing.Verbose() {
 		println()
 		println(url)

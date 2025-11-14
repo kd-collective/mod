@@ -7,6 +7,7 @@ package sumdb
 import (
 	"bytes"
 	"fmt"
+	"maps"
 	"strings"
 	"sync"
 	"testing"
@@ -311,20 +312,12 @@ func (tc *testClient) fork() *testClient {
 		treeSize:   tc.treeSize,
 		hashes:     append([]tlog.Hash{}, tc.hashes...),
 		signer:     tc.signer,
-		config:     copyMap(tc.config),
-		cache:      copyMap(tc.cache),
-		remote:     copyMap(tc.remote),
+		config:     maps.Clone(tc.config),
+		cache:      maps.Clone(tc.cache),
+		remote:     maps.Clone(tc.remote),
 	}
 	tc2.newClient()
 	return tc2
-}
-
-func copyMap(m map[string][]byte) map[string][]byte {
-	m2 := make(map[string][]byte)
-	for k, v := range m {
-		m2[k] = v
-	}
-	return m2
 }
 
 // ReadHashes is tc's implementation of tlog.HashReader, for use with

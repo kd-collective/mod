@@ -62,8 +62,8 @@ func TestTree(t *testing.T) {
 	var storage testHashStorage
 	tiles := make(map[Tile][]byte)
 	const testH = 2
-	for i := int64(0); i < 100; i++ {
-		data := []byte(fmt.Sprintf("leaf %d", i))
+	for i := range int64(100) {
+		data := fmt.Appendf(nil, "leaf %d", i)
 		hashes, err := StoredHashes(i, data, storage)
 		if err != nil {
 			t.Fatal(err)
@@ -218,8 +218,8 @@ func TestTree(t *testing.T) {
 }
 
 func TestSplitStoredHashIndex(t *testing.T) {
-	for l := 0; l < 10; l++ {
-		for n := int64(0); n < 100; n++ {
+	for l := range 10 {
+		for n := range int64(100) {
 			x := StoredHashIndex(l, n)
 			l1, n1 := SplitStoredHashIndex(x)
 			if l1 != l || n1 != n {

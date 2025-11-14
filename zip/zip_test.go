@@ -98,11 +98,11 @@ func readTest(file string) (testParams, error) {
 		if line == "" {
 			continue
 		}
-		eq := strings.IndexByte(line, '=')
-		if eq < 0 {
+		before, after, ok := strings.Cut(line, "=")
+		if !ok {
 			return testParams{}, fmt.Errorf("%s:%d: missing = separator", file, n)
 		}
-		key, value := strings.TrimSpace(line[:eq]), strings.TrimSpace(line[eq+1:])
+		key, value := strings.TrimSpace(before), strings.TrimSpace(after)
 		switch key {
 		case "path":
 			test.path = value
@@ -190,7 +190,7 @@ func (fi fakeFileInfo) Size() int64        { return int64(fi.f.size) }
 func (fi fakeFileInfo) Mode() os.FileMode  { return 0644 }
 func (fi fakeFileInfo) ModTime() time.Time { return time.Time{} }
 func (fi fakeFileInfo) IsDir() bool        { return false }
-func (fi fakeFileInfo) Sys() interface{}   { return nil }
+func (fi fakeFileInfo) Sys() any           { return nil }
 
 type zeroReader struct{}
 
@@ -228,7 +228,6 @@ func TestCheckFiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, testPath := range testPaths {
-		testPath := testPath
 		name := strings.TrimSuffix(filepath.Base(testPath), ".txt")
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -285,7 +284,6 @@ func TestCheckDir(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, testPath := range testPaths {
-		testPath := testPath
 		name := strings.TrimSuffix(filepath.Base(testPath), ".txt")
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -345,7 +343,6 @@ func TestCheckZip(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, testPath := range testPaths {
-		testPath := testPath
 		name := strings.TrimSuffix(filepath.Base(testPath), ".txt")
 		t.Run(name, func(t *testing.T) {
 			t.Parallel()
@@ -403,7 +400,6 @@ func TestCreate(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, testEntry := range testEntries {
-		testEntry := testEntry
 		base := filepath.Base(testEntry.Name())
 		if filepath.Ext(base) != ".txt" {
 			continue
@@ -466,7 +462,6 @@ func TestCreateFromDir(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, testEntry := range testEntries {
-		testEntry := testEntry
 		base := filepath.Base(testEntry.Name())
 		if filepath.Ext(base) != ".txt" {
 			continue
@@ -752,7 +747,6 @@ func TestCreateSizeLimits(t *testing.T) {
 	})
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 
@@ -788,7 +782,6 @@ func TestUnzipSizeLimits(t *testing.T) {
 		t.Skip("creating large files takes time")
 	}
 	for _, test := range sizeLimitTests {
-		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 			tmpZipFile, err := os.CreateTemp(t.TempDir(), "TestUnzipSizeLimits-*.zip")
@@ -939,7 +932,6 @@ func TestUnzipSizeLimitsSpecial(t *testing.T) {
 			wantErr2: "not a valid zip file",
 		},
 	} {
-		test := test
 		t.Run(test.desc, func(t *testing.T) {
 			t.Parallel()
 			tmpZipFile, err := os.CreateTemp(t.TempDir(), "TestUnzipSizeLimitsSpecial-*.zip")
@@ -1198,7 +1190,6 @@ func TestVCS(t *testing.T) {
 			wantZipHash:     "d6a7e03e02e5f7714bd12653d319a3b0f6e1099c01b1f9a17bc3613fb31c9170",
 		},
 	} {
-		test := test
 		testName := strings.ReplaceAll(test.m.String(), "/", "_")
 		t.Run(testName, func(t *testing.T) {
 			if have, ok := haveVCS[test.vcs]; !ok {

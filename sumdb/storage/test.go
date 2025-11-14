@@ -17,7 +17,7 @@ func TestStorage(t *testing.T, ctx context.Context, storage Storage) {
 
 	// Insert records.
 	err := s.ReadWrite(ctx, func(ctx context.Context, tx Transaction) error {
-		for i := 0; i < 10; i++ {
+		for i := range 10 {
 			err := tx.BufferWrites([]Write{
 				{Key: fmt.Sprint(i), Value: fmt.Sprint(-i)},
 				{Key: fmt.Sprint(1000 + i), Value: fmt.Sprint(-1000 - i)},
